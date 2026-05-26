@@ -64,7 +64,6 @@
 </head>
 <body class="p-4 md:p-6 bg-[#fcfcfd] text-slate-800 dark:bg-[#0f172a] dark:text-slate-100">
 
-  <!-- LEFT DRAWER OVERLAY WRAPPER -->
   <div id="sidebar-root" class="fixed inset-0 z-50 pointer-events-none">
     <div id="sidebar-overlay" onclick="closeSidebar()" class="sidebar-overlay absolute inset-0 opacity-0 pointer-events-none"></div>
     <div class="sidebar-drawer absolute left-0 top-0 bottom-0 w-72 bg-white dark:bg-[#1e293b] shadow-2xl border-r border-slate-100 dark:border-slate-800 flex flex-col pointer-events-auto p-5">
@@ -83,7 +82,6 @@
 
   <div id="app" class="max-w-xl mx-auto">
     
-    <!-- GLOBAL APPLICATION HEADER BAR -->
     <div class="flex justify-between items-center mb-6 gap-2">
       <div class="min-w-0 flex-1">
         <div id="header-breadcrumbs" class="hidden text-xs text-blue-500 font-bold mb-1 flex items-center gap-1">
@@ -93,9 +91,7 @@
         <p id="app-dynamic-sub-title" class="text-xs text-slate-400 truncate">Choose a subject worksheet tab to begin</p>
       </div>
       
-      <!-- Utility Tray Panel Controls Context aligned to the right corner -->
       <div class="flex items-center gap-1.5 shrink-0">
-        <!-- Sound Toggle Button -->
         <button onclick="toggleAudioMute()" class="header-icon-btn text-slate-600 dark:text-slate-300" title="Toggle Sound">
           <span id="sound-icon-container">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
@@ -105,15 +101,11 @@
           <span id="sound-text-label" class="text-[8px] font-extrabold uppercase tracking-wide mt-1 scale-[0.9]">Sound</span>
         </button>
 
-        <!-- Theme Toggle Button with Matching Graphic Line Weight -->
         <button onclick="toggleDarkMode()" class="header-icon-btn text-slate-600 dark:text-slate-300" title="Toggle Theme">
-          <span id="theme-icon-container">
-            <!-- Populated via script to match current layout state -->
-          </span>
+          <span id="theme-icon-container"></span>
           <span id="theme-text-label" class="text-[8px] font-extrabold uppercase tracking-wide mt-1 scale-[0.9]">Dark</span>
         </button>
 
-        <!-- Home Button placed in the final rightmost corner position -->
         <button onclick="showSubjectsScreen()" class="header-icon-btn text-slate-600 dark:text-slate-300" title="Go Home">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
             <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -123,7 +115,6 @@
       </div>
     </div>
 
-    <!-- SCREEN 1: Subject Selection Browser -->
     <div id="subject-screen">
       <div id="subject-grid" class="space-y-3 mt-2">
         <div class="space-y-2">
@@ -133,15 +124,12 @@
       </div>
     </div>
 
-    <!-- SCREEN 2: Chapter Selection Browser -->
     <div id="chapter-screen" class="hidden">
       <div id="chapter-grid" class="space-y-3"></div>
     </div>
 
-    <!-- SCREEN 3: Interactive Quiz Panel -->
     <div id="quiz-screen" class="hidden">
       
-      <!-- Top Dynamic Context Navigation Sub-Row Header Block -->
       <div class="flex items-center gap-3 mb-4">
         <button onclick="openSidebar()" class="w-11 h-11 flex flex-col items-center justify-center border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition gap-[4px]">
           <span class="w-4 h-[2px] bg-slate-600 dark:bg-slate-400 rounded-full"></span>
@@ -154,14 +142,12 @@
           <p id="header-topic-name" class="text-base font-bold text-slate-800 dark:text-slate-100 truncate">Topic Parameters Sub-Header</p>
         </div>
 
-        <!-- Text Font Scaler Utility Inside Quiz Window Area -->
         <div class="flex items-center shrink-0">
           <button onclick="changeFontSize(-1)" class="w-9 h-11 border border-slate-200 dark:border-slate-700 rounded-l-xl hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold" title="Decrease Font">A⁻</button>
           <button onclick="changeFontSize(1)" class="w-9 h-11 border-y border-r border-slate-200 dark:border-slate-700 rounded-r-xl hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold" title="Increase Font">A⁺</button>
         </div>
       </div>
 
-      <!-- Scoreboard Row Layout View -->
       <div class="grid grid-cols-3 gap-2.5 mb-3.5">
         <div class="bento-card p-2 text-center border-b-[3px] border-b-green-500">
           <p class="text-[8px] font-bold text-slate-400 uppercase tracking-wider">Correct</p>
@@ -177,7 +163,6 @@
         </div>
       </div>
 
-      <!-- Slider Container -->
       <div class="bento-card p-3 mb-4 bg-slate-50 dark:bg-slate-800/50 relative">
         <div class="flex items-center justify-between gap-2">
           <div id="badge-row-container" class="flex-1 overflow-x-auto no-scrollbar py-1">
@@ -194,7 +179,6 @@
         </div>
       </div>
 
-      <!-- Quiz Card Container -->
       <div id="quiz-card" class="bento-card p-6 md:p-8 mb-6 swipe-zone">
         <div class="flex justify-between items-start gap-2 mb-1">
           <div id="exam-tag" class="text-[10px] text-blue-500 font-bold italic tracking-wide"></div>
@@ -260,14 +244,44 @@
       if(localStorage.getItem('theme') === 'dark') {
         document.documentElement.classList.add('dark');
       }
-      localStorage.removeItem('quiz_app_session');
       
       updateMuteIconsUI();
       updateThemeLabelsAndIconsUI();
       applyFontSizeStyles();
-      loadSubjects();
       setupSwipeGestures();
-      
+
+      // Check if a running backup session exists for a quiz state restore
+      const savedSession = sessionStorage.getItem('active_quiz_session');
+      if (savedSession) {
+        try {
+          const sessionData = JSON.parse(savedSession);
+          selectedSubject = sessionData.subject;
+          selectedChapter = sessionData.chapter;
+          qList = sessionData.qList || [];
+          fullQuestions = sessionData.fullQuestions || {};
+          curIdx = sessionData.curIdx || 0;
+          userAnswers = sessionData.userAnswers || {};
+          
+          window.history.replaceState({ screen: 'quiz' }, '');
+          applyNavigationTransitionEffects('quiz');
+          
+          document.getElementById('header-subject-name').innerText = selectedSubject;
+          document.getElementById('header-topic-name').innerText = selectedChapter;
+          document.getElementById('score-total').innerText = qList.length;
+          
+          updateScores();
+          loadCurrentQuestion();
+          loadSubjectsSilentBackup(); 
+          loadChaptersSilentBackup(selectedSubject);
+          return;
+        } catch(e) {
+          clearQuizRuntimeCache();
+        }
+      }
+
+      // No restore session found: Load default home state
+      clearQuizRuntimeCache();
+      loadSubjects();
       window.history.replaceState({ screen: 'subject' }, '');
       evaluateDynamicHeaderTitles('subject');
     };
@@ -276,6 +290,20 @@
       if (!event.state) return;
       applyNavigationTransitionEffects(event.state.screen);
     };
+
+    function saveQuizProgressSession() {
+      if (qList.length > 0) {
+        const payload = {
+          subject: selectedSubject,
+          chapter: selectedChapter,
+          qList: qList,
+          fullQuestions: fullQuestions,
+          curIdx: curIdx,
+          userAnswers: userAnswers
+        };
+        sessionStorage.setItem('active_quiz_session', JSON.stringify(payload));
+      }
+    }
 
     function triggerContextBackRouting() {
       playBeepSound('tap');
@@ -295,6 +323,8 @@
         clearQuizRuntimeCache();
         sub.classList.remove('hidden');
       } else if (targetScreen === 'chapter') {
+        // Clear quiz progression if changing chapters explicitly
+        sessionStorage.removeItem('active_quiz_session');
         ch.classList.remove('hidden');
       } else if (targetScreen === 'quiz') {
         qz.classList.remove('hidden');
@@ -343,7 +373,6 @@
       
       if (document.documentElement.classList.contains('dark')) {
         textLabel.innerText = "Light";
-        // Unified Outline Sun Graphic Vector Icon
         iconContainer.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 text-amber-400">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m0 13.5V21M5.147 5.147l1.591 1.591M15.662 15.662l1.591 1.591M3 12h2.25m13.5 0H21M5.147 18.853l1.591-1.591M15.662 6.75l1.591-1.591M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9z" />
@@ -351,7 +380,6 @@
         `;
       } else {
         textLabel.innerText = "Dark";
-        // Unified Outline Half Moon Graphic Vector Icon
         iconContainer.innerHTML = `
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
@@ -455,6 +483,7 @@
       fullQuestions = {};
       qList = [];
       curIdx = 0;
+      sessionStorage.removeItem('active_quiz_session');
     }
 
     function loadSubjects() {
@@ -465,19 +494,31 @@
             showGlobalError(subjects.message || subjects.error);
             return;
           }
-          document.getElementById('subject-grid').innerHTML = subjects.map(name => `
-            <div onclick="clearQuizRuntimeCache(); selectSubject('${name.replace(/'/g, "\\'")}')" class="bento-card p-5 flex justify-between items-center cursor-pointer hover:border-blue-400 bg-white dark:bg-slate-800 group transition-all">
-              <span class="font-bold text-sm text-slate-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">${name}</span>
-              <span class="text-slate-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1">→</span>
-            </div>
-          `).join('');
+          renderSubjectsUI(subjects);
         })
         .catch(err => showGlobalError("Deployment Connection Failure. Check script configuration."));
+    }
+
+    function loadSubjectsSilentBackup() {
+      fetch(`${API_URL}?action=getSubjects`)
+        .then(response => response.json())
+        .then(subjects => { if(!subjects.error) renderSubjectsUI(subjects); })
+        .catch(e => {});
+    }
+
+    function renderSubjectsUI(subjects) {
+      document.getElementById('subject-grid').innerHTML = subjects.map(name => `
+        <div onclick="clearQuizRuntimeCache(); selectSubject('${name.replace(/'/g, "\\'")}')" class="bento-card p-5 flex justify-between items-center cursor-pointer hover:border-blue-400 bg-white dark:bg-slate-800 group transition-all">
+          <span class="font-bold text-sm text-slate-700 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">${name}</span>
+          <span class="text-slate-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1">→</span>
+        </div>
+      `).join('');
     }
 
     function showSubjectsScreen() {
       playBeepSound('tap');
       clearQuizRuntimeCache();
+      loadSubjects(); // Ensures everything refreshes explicitly on first page
       window.history.pushState({ screen: 'subject' }, '');
       applyNavigationTransitionEffects('subject');
     }
@@ -493,10 +534,19 @@
         .then(response => response.json())
         .then(chapters => {
           window.cachedChapters = chapters;
-          localStorage.setItem(`ch_cache_${subjectName}`, JSON.stringify(chapters));
           renderChaptersUIFromCache();
         })
         .catch(err => console.error("Error retrieving tab headers:", err));
+    }
+
+    function loadChaptersSilentBackup(subjectName) {
+      fetch(`${API_URL}?action=getChapters&sheetName=${encodeURIComponent(subjectName)}`)
+        .then(response => response.json())
+        .then(chapters => {
+          window.cachedChapters = chapters;
+          renderChaptersUIFromCache();
+        })
+        .catch(e => {});
     }
 
     function renderChaptersUIFromCache() {
@@ -547,6 +597,7 @@
           document.getElementById('score-total').innerText = qList.length;
           renderUnifiedQuestionNavigationControls();
           loadCurrentQuestion();
+          saveQuizProgressSession();
           return fetch(`${API_URL}?action=getFullChapterData&sheetName=${encodeURIComponent(selectedSubject)}&chapterName=${encodeURIComponent(chapterName)}`);
         })
         .then(response => response ? response.json() : [])
@@ -556,6 +607,7 @@
             renderOptions(fullQuestions[curIdx]);
           }
           renderUnifiedQuestionNavigationControls();
+          saveQuizProgressSession();
         })
         .catch(err => console.error(err));
     }
@@ -606,6 +658,7 @@
       playBeepSound('tap');
       curIdx = indexValue;
       loadCurrentQuestion();
+      saveQuizProgressSession();
     }
 
     function loadCurrentQuestion() {
@@ -628,6 +681,7 @@
             fullQuestions[curIdx] = details; 
             renderOptions(details);
             renderUnifiedQuestionNavigationControls();
+            saveQuizProgressSession();
           })
           .catch(err => console.error(err));
       }
@@ -661,6 +715,7 @@
               updateScores(); 
               renderOptions(data);
               renderUnifiedQuestionNavigationControls();
+              saveQuizProgressSession();
             };
           }
           grid.appendChild(div);
@@ -688,6 +743,7 @@
         playBeepSound('tap');
         curIdx++; 
         loadCurrentQuestion(); 
+        saveQuizProgressSession();
       } 
     }
     
@@ -696,6 +752,7 @@
         playBeepSound('tap');
         curIdx--; 
         loadCurrentQuestion(); 
+        saveQuizProgressSession();
       } 
     }
 
