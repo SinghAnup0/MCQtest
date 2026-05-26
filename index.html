@@ -213,10 +213,30 @@
     let fontSizeLevel = parseInt(localStorage.getItem('font_size_lvl')) || 0; 
     let audioMuted = localStorage.getItem('audio_muted') === 'true';
 
+    // Core Audio Hardware Core Link Context Engine
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playBeepSound(type) {
+    
+    // Unified Device Core Feedback Trigger Engine (Sound & Haptic Vibration)
+    function triggerDeviceFeedback(type) {
+      // 1. Physical Haptic Vibrations (Android WebAPI & WebView Hardware Pipeline Mapping)
+      if (navigator.vibrate) {
+        if (type === 'correct') {
+          navigator.vibrate(50); // Sharp, premium validation pulse
+        } else if (type === 'wrong') {
+          navigator.vibrate(200); // Strong alert rumble feedback
+        } else if (type === 'tap') {
+          navigator.vibrate(15); // Ultra-short mechanical interaction click
+        }
+      }
+
+      // 2. Continuous Synthetic WebAudio Oscillator Track Mapping
       if (audioMuted) return;
       try {
+        // Essential Fix: Forcibly wake up contexts blocked on suspended mobile states
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.connect(gain);
@@ -232,12 +252,19 @@
           osc.type = 'sawtooth';
           gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
           osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-        } else {
+        } else if (type === 'tap') {
           osc.frequency.setValueAtTime(440, audioCtx.currentTime); 
           gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
           osc.start(); osc.stop(audioCtx.currentTime + 0.05);
         }
-      } catch(e){}
+      } catch(e){
+        console.log("AudioContext blocked or uninitialized:", e);
+      }
+    }
+
+    // Legacy structural component mapping for older routing calls
+    function playBeepSound(type) {
+      triggerDeviceFeedback(type);
     }
 
     window.onload = () => {
@@ -250,7 +277,6 @@
       applyFontSizeStyles();
       setupSwipeGestures();
 
-      // Check if a running backup session exists for a quiz state restore
       const savedSession = sessionStorage.getItem('active_quiz_session');
       if (savedSession) {
         try {
@@ -279,7 +305,6 @@
         }
       }
 
-      // No restore session found: Load default home state
       clearQuizRuntimeCache();
       loadSubjects();
       window.history.replaceState({ screen: 'subject' }, '');
@@ -306,7 +331,7 @@
     }
 
     function triggerContextBackRouting() {
-      playBeepSound('tap');
+      triggerDeviceFeedback('tap');
       window.history.back();
     }
 
@@ -323,7 +348,6 @@
         clearQuizRuntimeCache();
         sub.classList.remove('hidden');
       } else if (targetScreen === 'chapter') {
-        // Clear quiz progression if changing chapters explicitly
         sessionStorage.removeItem('active_quiz_session');
         ch.classList.remove('hidden');
       } else if (targetScreen === 'quiz') {
@@ -356,7 +380,7 @@
     }
 
     function toggleDarkMode() {
-      playBeepSound('tap');
+      triggerDeviceFeedback('tap');
       if (document.documentElement.classList.contains('dark')) {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('theme', 'light');
@@ -392,7 +416,7 @@
       audioMuted = !audioMuted;
       localStorage.setItem('audio_muted', audioMuted);
       updateMuteIconsUI();
-      playBeepSound('tap');
+      triggerDeviceFeedback('tap');
     }
 
     function updateMuteIconsUI() {
@@ -417,7 +441,7 @@
     }
 
     function changeFontSize(direction) {
-      playBeepSound('tap');
+      triggerDeviceFeedback('tap');
       fontSizeLevel = Math.max(-1, Math.min(2, fontSizeLevel + direction));
       localStorage.setItem('font_size_lvl', fontSizeLevel);
       applyFontSizeStyles();
@@ -447,7 +471,7 @@
     }
 
     function openSidebar() {
-      playBeepSound('tap');
+      triggerDeviceFeedback('tap');
       const root = document.getElementById('sidebar-root');
       const overlay = document.getElementById('sidebar-overlay');
       root.classList.add('sidebar-open');
@@ -516,15 +540,15 @@
     }
 
     function showSubjectsScreen() {
-      playBeepSound('tap');
+      triggerDeviceFeedback('tap');
       clearQuizRuntimeCache();
-      loadSubjects(); // Ensures everything refreshes explicitly on first page
+      loadSubjects(); 
       window.history.pushState({ screen: 'subject' }, '');
       applyNavigationTransitionEffects('subject');
     }
 
     function selectSubject(subjectName) {
-      playBeepSound('tap');
+      triggerDeviceFeedback('tap');
       selectedSubject = subjectName;
       window.history.pushState({ screen: 'chapter' }, '');
       applyNavigationTransitionEffects('chapter');
@@ -572,7 +596,7 @@
     }
 
     function startQuiz(chapterName) {
-      playBeepSound('tap');
+      triggerDeviceFeedback('tap');
       selectedChapter = chapterName;
       qList = []; fullQuestions = {}; userAnswers = {}; curIdx = 0; isMatrixExpanded = false;
       document.getElementById('expanded-matrix-panel').classList.add('hidden');
@@ -609,89 +633,38 @@
           renderUnifiedQuestionNavigationControls();
           saveQuizProgressSession();
         })
-        .catch(err => console.error(err));
-    }
-
-    function toggleGridExpandedView() {
-      playBeepSound('tap');
-      const panel = document.getElementById('expanded-matrix-panel');
-      isMatrixExpanded = !isMatrixExpanded;
-      panel.classList.toggle('hidden', !isMatrixExpanded);
-      renderUnifiedQuestionNavigationControls();
-    }
-
-    function renderUnifiedQuestionNavigationControls() {
-      if(qList.length === 0) return;
-      
-      const htmlArray = qList.map((_, idx) => {
-        let statusClass = "";
-        if (userAnswers[idx] && fullQuestions[idx]) {
-          statusClass = (userAnswers[idx] === fullQuestions[idx].Answer) ? "q-circle-correct" : "q-circle-wrong";
-        }
-        if (idx === curIdx) statusClass += " q-circle-active";
-        return `<div class="q-circle ${statusClass}" id="slider-circle-${idx}" onclick="jumpToQuestion(${idx})">${idx + 1}</div>`;
-      });
-
-      document.getElementById('badge-slider-row').innerHTML = htmlArray.join('');
-      
-      if (isMatrixExpanded) {
-        const gridHtmlArray = qList.map((_, idx) => {
-          let statusClass = "";
-          if (userAnswers[idx] && fullQuestions[idx]) {
-            statusClass = (userAnswers[idx] === fullQuestions[idx].Answer) ? "q-circle-correct" : "q-circle-wrong";
-          }
-          if (idx === curIdx) statusClass += " q-circle-active";
-          return `<div class="q-circle ${statusClass}" onclick="jumpToQuestion(${idx})">${idx + 1}</div>`;
-        });
-        document.getElementById('badge-matrix-grid').innerHTML = gridHtmlArray.join('');
-      }
-
-      setTimeout(() => {
-        const activeCircle = document.getElementById(`slider-circle-${curIdx}`);
-        if(activeCircle) {
-          activeCircle.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        }
-      }, 20);
-    }
-
-    function jumpToQuestion(indexValue) {
-      playBeepSound('tap');
-      curIdx = indexValue;
-      loadCurrentQuestion();
-      saveQuizProgressSession();
+        .catch(err => console.error("Error loading chapter data:", err));
     }
 
     function loadCurrentQuestion() {
       if (qList.length === 0) return;
-      const qSummary = qList[curIdx];
-      document.getElementById('q-text').innerText = qSummary.question;
+      
+      // Update basic index counters
       document.getElementById('q-label').innerText = `Question ${curIdx + 1} of ${qList.length}`;
       document.getElementById('explanation-box').classList.add('hidden');
       document.getElementById('prev-btn').disabled = (curIdx === 0);
+      document.getElementById('next-btn').disabled = (curIdx === qList.length - 1);
       
-      renderUnifiedQuestionNavigationControls();
+      // Load current item layout reference
+      const questionOutline = qList[curIdx];
+      document.getElementById('q-text').innerText = questionOutline.Question || "Loading question payload details...";
+      document.getElementById('exam-tag').innerText = questionOutline.Exam || "";
 
+      // If full dynamic options array downloaded, run deep renderer injection pass
       if (fullQuestions[curIdx]) {
         renderOptions(fullQuestions[curIdx]);
       } else {
         document.getElementById('options-grid').innerHTML = '<div class="shimmer h-12 mb-2 w-full"></div><div class="shimmer h-12 w-full"></div>';
-        fetch(`${API_URL}?action=getQuestionDetails&sheetName=${encodeURIComponent(selectedSubject)}&rowIdx=${qSummary.rowIdx}`)
-          .then(response => response.json())
-          .then(details => {
-            fullQuestions[curIdx] = details; 
-            renderOptions(details);
-            renderUnifiedQuestionNavigationControls();
-            saveQuizProgressSession();
-          })
-          .catch(err => console.error(err));
       }
+
+      renderUnifiedQuestionNavigationControls();
     }
 
     function renderOptions(data) {
       const grid = document.getElementById('options-grid');
       grid.innerHTML = '';
-      document.getElementById('exam-tag').innerText = data.Exam || "";
-      
+      applyFontSizeStyles();
+
       ['OptionA', 'OptionB', 'OptionC', 'OptionD', 'OptionE'].forEach((key, i) => {
         const val = data[key];
         if (val && val.toString().trim() !== "") {
@@ -703,19 +676,17 @@
           if (userAnswers[curIdx]) {
             if (letter === data.Answer) div.classList.add('selected-correct');
             else if (letter === userAnswers[curIdx]) div.classList.add('selected-wrong');
-            showExp(data.Explanation);
+            showExplanationPanel(data.Explanation);
           } else {
             div.onclick = () => { 
-              userAnswers[curIdx] = letter;
+              userAnswers[curIdx] = letter; 
               if (letter === data.Answer) {
-                playBeepSound('correct');
+                triggerDeviceFeedback('correct'); 
               } else {
-                playBeepSound('wrong');
+                triggerDeviceFeedback('wrong');
               }
               updateScores(); 
-              renderOptions(data);
-              renderUnifiedQuestionNavigationControls();
-              saveQuizProgressSession();
+              loadCurrentQuestion();
             };
           }
           grid.appendChild(div);
@@ -723,24 +694,59 @@
       });
     }
 
-    function showExp(text) {
+    function showExplanationPanel(text) {
       const box = document.getElementById('explanation-box');
-      box.innerText = text || "No explicit explanation available for this question item.";
+      box.innerText = text || "No detailed explanation parameters provided for this item.";
       box.classList.remove('hidden');
     }
 
     function updateScores() {
-      let c = 0, w = 0;
+      let correctCount = 0, wrongCount = 0;
       Object.keys(userAnswers).forEach(idx => {
-        if (fullQuestions[idx] && userAnswers[idx] === fullQuestions[idx].Answer) c++; else w++;
+        if (fullQuestions[idx]) {
+          if (userAnswers[idx] === fullQuestions[idx].Answer) correctCount++; else wrongCount++;
+        } else if (qList[idx]) {
+          // Fallback parsing strategy logic configuration block if shallow outline array mapping used
+          if (userAnswers[idx] === qList[idx].Answer) correctCount++; else wrongCount++;
+        }
       });
-      document.getElementById('score-correct').innerText = c;
-      document.getElementById('score-wrong').innerText = w;
+      document.getElementById('score-correct').innerText = correctCount;
+      document.getElementById('score-wrong').innerText = wrongCount;
     }
 
+    function renderUnifiedQuestionNavigationControls() {
+      if(qList.length === 0) return;
+      
+      const generateMatrixLayoutString = () => qList.map((_, idx) => {
+        let statusClass = "";
+        if (userAnswers[idx]) {
+          const isCorrect = fullQuestions[idx] ? (userAnswers[idx] === fullQuestions[idx].Answer) : (userAnswers[idx] === qList[idx].Answer);
+          statusClass = isCorrect ? "q-circle-correct" : "q-circle-wrong";
+        }
+        if (idx === curIdx) statusClass += " q-circle-active";
+        return `<div class="q-circle ${statusClass}" id="slider-circle-${idx}" onclick="jumpToQuestion(${idx})">${idx + 1}</div>`;
+      }).join('');
+
+      document.getElementById('badge-slider-row').innerHTML = generateMatrixLayoutString();
+      if (isMatrixExpanded) {
+        document.getElementById('badge-matrix-grid').innerHTML = generateMatrixLayoutString();
+      }
+
+      setTimeout(() => {
+        const targetElement = document.getElementById(`slider-circle-${curIdx}`);
+        if(targetElement) targetElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }, 30);
+    }
+
+    function jumpToQuestion(idx) { 
+      triggerDeviceFeedback('tap'); 
+      curIdx = idx; 
+      loadCurrentQuestion(); 
+    }
+    
     function nextQ() { 
       if (curIdx < qList.length - 1) { 
-        playBeepSound('tap');
+        triggerDeviceFeedback('tap'); 
         curIdx++; 
         loadCurrentQuestion(); 
         saveQuizProgressSession();
@@ -749,25 +755,30 @@
     
     function prevQ() { 
       if (curIdx > 0) { 
-        playBeepSound('tap');
+        triggerDeviceFeedback('tap'); 
         curIdx--; 
         loadCurrentQuestion(); 
         saveQuizProgressSession();
       } 
     }
+    
+    function toggleGridExpandedView() {
+      triggerDeviceFeedback('tap');
+      isMatrixExpanded = !isMatrixExpanded;
+      document.getElementById('expanded-matrix-panel').classList.toggle('hidden', !isMatrixExpanded);
+      renderUnifiedQuestionNavigationControls();
+    }
 
     function setupSwipeGestures() {
       const card = document.getElementById('quiz-card');
-      card.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
-      card.addEventListener('touchend', (e) => { touchEndX = e.changedTouches[0].screenX; handleSwipeCalculations(); }, { passive: true });
-    }
-
-    function handleSwipeCalculations() {
-      const swipeThreshold = 60; 
-      const difference = touchStartX - touchEndX;
-      if (Math.abs(difference) > swipeThreshold) {
-        if (difference > 0) nextQ(); else prevQ();
-      }
+      card.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+      card.addEventListener('touchend', e => { 
+        touchEndX = e.changedTouches[0].screenX; 
+        const delta = touchStartX - touchEndX; 
+        if (Math.abs(delta) > 65) { 
+          if (delta > 0) nextQ(); else prevQ(); 
+        } 
+      }, { passive: true });
     }
   </script>
 </body>
